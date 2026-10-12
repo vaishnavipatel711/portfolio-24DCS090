@@ -1,15 +1,19 @@
-const express = require("express");
-const validateId = require("../middleware/validateId");
-const c = require("../controllers/taskController");
+const express = require('express');
+const auth = require('../middleware/auth');
+const validateId = require('../middleware/validateId');
+const { validateCreateTask, validateUpdateTask } = require('../middleware/validate');
+const c = require('../controllers/taskController');
 
 const router = express.Router();
 
-router.get("/", c.getAllTasks);
-router.post("/", c.createTask);
+// Every route below this line requires a valid JWT.
+router.use(auth);
 
-// validateId is route-specific middleware: it only runs on routes that use :id
-router.get("/:id", validateId, c.getTask);
-router.put("/:id", validateId, c.updateTask);
-router.delete("/:id", validateId, c.deleteTask);
+router.get('/', c.getAllTasks);
+router.post('/', validateCreateTask, c.createTask);
+
+router.get('/:id', validateId, c.getTask);
+router.put('/:id', validateId, validateUpdateTask, c.updateTask);
+router.delete('/:id', validateId, c.deleteTask);
 
 module.exports = router;

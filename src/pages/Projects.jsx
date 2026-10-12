@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
 import ErrorMessage from '../components/ErrorMessage';
-import RepoList from '../components/RepoList';
+
+// Practical 8 (extra): the repo list is the heaviest part of this page, so it is lazy loaded too
+const RepoList = lazy(() => import('../components/RepoList'));
 
 const GITHUB_USERNAME = 'vaishnavipatel711';
 
@@ -70,7 +72,9 @@ function Projects() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search repositories by name"
           />
-          <RepoList data={filtered} />
+          <Suspense fallback={<Spinner label="Loading repository list..." />}>
+            <RepoList data={filtered} />
+          </Suspense>
         </>
       )}
     </section>

@@ -1,16 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
   // trim: true removes surrounding whitespace on create AND update
-  title: { type: String, required: [true, "Title is required"], trim: true },
+  title: { type: String, required: [true, 'Title is required'], trim: true },
   description: { type: String, trim: true },
   completed: { type: Boolean, default: false },
   priority: {
     type: String,
-    enum: { values: ["low", "medium", "high"], message: "Priority must be low, medium or high" },
-    default: "medium",
+    enum: { values: ['low', 'medium', 'high'], message: 'Priority must be low, medium or high' },
+    default: 'medium',
   },
+  // Practical 7: every task belongs to the user who created it
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Task", taskSchema);
+module.exports = mongoose.model('Task', taskSchema);
