@@ -18,7 +18,7 @@ const token = jwt.sign({ id: USER_ID }, process.env.JWT_SECRET, { expiresIn: '1h
 describe('Task Management API', () => {
   test('GET /tasks without a token returns 401', async () => {
     const res = await request(app).get('/tasks');
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(401);
     expect(res.body.error).toMatch(/Authentication required/);
   });
 
