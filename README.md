@@ -100,3 +100,33 @@ Open http://localhost:5173, register an account, log in, and use the Tasks page.
 If the backend URL differs, copy `.env.example` to `.env` and set `VITE_API_URL`.
 
 `.env` files are git-ignored; `JWT_SECRET` and the database password are never committed.
+
+## Run with Docker (Practical 11)
+
+You need Docker Desktop running. Make sure `server/.env` exists (copy `server/.env.example`) with a real `JWT_SECRET`.
+
+```
+docker compose up --build
+```
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+- MongoDB: inside Docker as `mongodb:27017` (data kept in the `mongo-data` volume)
+
+Stop with `Ctrl+C`, or `docker compose down` (add `-v` to also delete the database volume).
+The Docker stack uses its own MongoDB, so register a new account the first time.
+
+## CI Pipeline (Practical 12)
+
+![CI Pipeline](https://github.com/vaishnavipatel711/portfolio-24DCS090/actions/workflows/ci.yml/badge.svg)
+
+On every push to `main` (and every pull request), GitHub Actions runs a lint job, then installs the backend dependencies and runs the Jest tests in `server/tests/`.
+
+Run the tests locally:
+
+```
+cd server
+npm test
+```
+
+Screenshots: `docs/ci-failed.png` (deliberately broken test) and `docs/ci-passed.png` (fixed).

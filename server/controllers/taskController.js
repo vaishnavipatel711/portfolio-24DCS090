@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const cache = require('../utils/cache');
+const taskEvents = require('../events/events');
 
 const notFoundError = () => {
   const err = new Error('Task not found');
@@ -63,16 +64,31 @@ exports.getTask = async (req, res, next) => {
   }
 };
 
+
 exports.createTask = async (req, res, next) => {
   try {
-    // req.body was validated and reduced to allowed fields by validateTask
-    const task = await Task.create({ ...req.body, user: req.user.id });
+    const task = await Task.create({
+      ...req.body,
+      user: req.user.id,
+    });
 
-    // A new task makes the cached "all tasks" list stale.
-    // (No single-task entry can exist for a task that did not exist yet.)
+    // Invalidate the task-list cache (Practical 9).
     cache.del(cache.allKey(req.user.id));
 
+    // Record when the API response is prepared.
+    console.log(
+      '[API] Response sent at:',
+      new Date().toISOString()
+    );
+
+    // Respond to the client first.
     res.status(201).json(task);
+
+    // Emit the event after the response call.
+    setImmediate(() => {
+      taskEvents.emit('task-created', task.toObject());
+    });
+
   } catch (err) {
     next(err);
   }

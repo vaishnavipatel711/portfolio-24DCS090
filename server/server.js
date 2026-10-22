@@ -1,7 +1,9 @@
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+
 
 const logger = require('./middleware/logger');
 const requireJson = require('./middleware/requireJson');
@@ -10,6 +12,8 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const debugRoutes = require('./routes/debug');
+
+require('./events/listeners');
 
 // Practical 7: the secret must come from .env, never from the code.
 if (!process.env.JWT_SECRET) {
